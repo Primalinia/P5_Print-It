@@ -1,112 +1,84 @@
-// Variables
+// Variables - Constantes
 const slides = [
-	{
-		"image": "slide1.jpg",
-		"tagLine": "Impressions tous formats <span>en boutique et en ligne</span>"
-	},
-	{
-		"image": "slide2.jpg",
-		"tagLine": "Tirages haute définition grand format <span>pour vos bureaux et events</span>"
-	},
-	{
-		"image": "slide3.jpg",
-		"tagLine": "Grand choix de couleurs <span>de CMJN aux pantones</span>"
-	},
-	{
-		"image": "slide4.png",
-		"tagLine": "Autocollants <span>avec découpe laser sur mesure</span>"
-	}
+  {
+    image: 'slide1.jpg',
+    tagLine: 'Impressions tous formats <span>en boutique et en ligne</span>',
+  },
+  {
+    image: 'slide2.jpg',
+    tagLine:
+      'Tirages haute définition grand format <span>pour vos bureaux et events</span>',
+  },
+  {
+    image: 'slide3.jpg',
+    tagLine: 'Grand choix de couleurs <span>de CMJN aux pantones</span>',
+  },
+  {
+    image: 'slide4.png',
+    tagLine: 'Autocollants <span>avec découpe laser sur mesure</span>',
+  },
 ];
 //console.log(slides);
 
 const left = document.querySelector('.arrow_left');
 const right = document.querySelector('.arrow_right');
 const bannerImg = document.querySelector('.banner-img');
-const dots = document.querySelectorAll('.dot'); // Sélectionne tous les points
+const p = document.querySelector('#banner p');
 const dotsTab = document.querySelector('.dots');
 let currentIndex = 0;
 
-let dot = document.createElement('div');// CRéation d'une balise "div"
-dot.classList.add('dot');//Ajoute une classe CSS à notre nouvelle balise "div" 
-dotsTab.appendChild(dot);//Ajoute notre nouvelle balise "div " à notre balise précédente
+let dot = document.createElement('div'); // CRéation d'une balise "div"
+dot.classList.add('dot'); //Ajoute une classe CSS à notre nouvelle balise "div"
+dotsTab.appendChild(dot); //Ajoute notre nouvelle balise "div " à notre balise précédente
 
 const displayDots = () => {
-	for (let i = 0; i < slides.length -1; i++) {
-		let dot = document.createElement('div');
-		dot.classList.add('dot');
-		dotsTab.appendChild(dot);
-		if(i === currentIndex){
-			dot.classList.add('dot_selected')
+	for (let i = 0; i < slides.length - 1; i++) {  //Initialise une boucle for 
+		let dot = document.createElement('div');  //Crée un nouvel élément HTML <div>et l'enregistre dans la variable dot
+		dot.classList.add('dot'); 
+		dotsTab.appendChild(dot);  
+		if (i === currentIndex) { 
+		dot.classList.add('dot_selected');  
 		}
 	}
-}
+};
 
-displayDots();
+displayDots();  //Appelle la fonction displayDots pour exécuter le code et créer les points
+const dots = document.querySelectorAll('.dot'); 
+console.log('dots contient', dots);  
 
-// Chevrons
-/* Gestionnaire d'événement,
-au clic du chevron gauche */
-left.addEventListener('click', function () {
-	currentIndex = (currentIndex - 1);
-	updateCarousel(currentIndex, 'left');
-	updateDots(currentIndex); // actualise les dots
-});
 
-// Gestionnaire d'événement au clic du chevron droit
-right.addEventListener('click', function () {
-	currentIndex = (currentIndex + 1);
-	updateCarousel(currentIndex, 'right');
-	updateDots(currentIndex); // Actualise les dots
-});
-
-// Dots
-/* Fonction pour mettre à jour,
-les points indicateurs */
-function updateDots(index) {
-	dots.forEach((dot, i) => {
-		if (i === index) {
-			dot.classList.add('dot_selected'); // Ajoute la classe pour le point actuel
-		} else {
-			dot.classList.remove('dot_selected'); // Supprime la classe pour les autres points
+//Right
+const handleRightClick = () => {
+	if (dots.length > 0) { 
+		dots[currentIndex].classList.remove('dot_selected'); //Supprime la classe CSS dot_selected de l'élément dot actuellement sélectionné
+		currentIndex++; 
+		if (currentIndex > slides.length - 1) { 
+		currentIndex = 0; 
 		}
-	});
-}
+		dots[currentIndex].classList.add('dot_selected'); 
+		bannerImg.src = './assets/images/slideshow/' + slides[currentIndex].image; //Met à jour la source de l'image du diaporama avec la nouvelle image de la variable slides
+		p.innerHTML = slides[currentIndex].tagLine; 
+	} else {
+		console.error("il n'y a pas de point dans la div ou de slides"); //Affiche un message d'erreur dans la console 
+	}
+};
 
+right.addEventListener('click', handleRightClick); //Ajoute un écouteur d'événement au bouton "Right" ('flèche droite') qui exécute la fonction handleRightClick chaque fois que le bouton est cliqué.
 
-
-//Mises à jour
-/* Fonctions de mises à jour: 
-Image, texte et points indicateurs */
-function updateCarousel(index, direction) {
-	// Passage entre la première et la dernière image du caroussel
-	if (currentIndex === -1 && direction === 'left') {
+//Click Left
+const handleLeftClick = () => {
+	if (dots.length > 0) {
+		dots[currentIndex].classList.remove('dot_selected');
+		currentIndex--;
+		if (currentIndex < 0) {
 		currentIndex = slides.length - 1;
-	} else if (currentIndex === slides.length && direction === 'right') {
-		currentIndex = 0;
+		}
+		dots[currentIndex].classList.add('dot_selected');
+		bannerImg.src = './assets/images/slideshow/' + slides[currentIndex].image;
+		p.innerHTML = slides[currentIndex].tagLine;
+	} else {
+		console.error("il n'a pas de point dans la div ou de slides");
 	}
+};
 
-
-	/* Mise à jour: 
-	de l'image */
-	const imagePath = `assets/images/slideshow/${slides[currentIndex].image}`;
-	bannerImg.src = imagePath;
-	bannerImg.alt = `Slide ${currentIndex + 1}`; // $ selectionne l'élément
-
-	/* Mise  à jour
-	du texte */
-	const tagLine = slides[currentIndex].tagLine;
-	document.querySelector('p').innerHTML = tagLine;
-}
-// Fonction pour mettre à jour les dots avec la bonne couleur pour le dot actif
-function updateDots(currentIndex) {
-	console.log(updateDots);
-    dots.forEach((dot, i) => {
-        if (i === currentIndex) {
-            dot.classList.add('dot_selected'); // Ajoute la classe active au dot correspondant
-        } else {
-            dot.classList.remove('dot_selected'); // Retire la classe active des autres dots
-        }
-    });
-
-}
-
+left.addEventListener('click', handleLeftClick);
